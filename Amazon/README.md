@@ -173,6 +173,8 @@ Tambien sirve para mantener las versiones de la API para que funcione bien en to
 ## Lambda
 
 * Puedo elegir en que lenguaje va a ser hecha la lambda
+* Soporta NodeJS, Phyton, Java, Go y C#.
+* Puedo importar codigo pero con algunas modificaciones para hacerlo serverless.
 * Con el permiso basico puede escribir logs en Cloudwatch
 * Son funciones que corren por poco tiempo, maximo 15 minutos
 * Puedo hacer triggers, por ejemplo, si algo se inserta en la DynamoDB se corre la lambda
@@ -189,5 +191,29 @@ Tambien sirve para mantener las versiones de la API para que funcione bien en to
 
 ### Como funciona una Lambda?
 
+Lo que triggerea a una Lambda son los **Event Sources**
 
+* DataStores: Como guardar los datos en dynamo
+* Endpoints: Cuando se le dan comandos a, por ejemplo, Alexa, se triggerea Lambda
+* Repositorios: Cuando se commitea codigo a un repo de AWS
+* Message Services: Cuando algo se publica en Amazon SNS topic
+
+### Excecution Models
+
+#### Push Events
+
+* Sincronico: Api Gateway, Alexa, Cloudfront
+* Asincronico: Cloudwatch, S3, SNS
+
+#### Pooling Events
+
+* Steam Based
+* Non Steam Based (Queue)
+
+### Ciclo de vida de una Lamda Function
+
+1) Se invoca. Se arma un entrono de ejecucion donde se ejecutará el codigo. Este entorno se congela
+2) Si llega otra request mientras el entorno esta frizzado, se pasa por un "warm start", donde se descongela el entorno y se corre el codigo sin preparar ni pasar por el proceso de arranque
+3) Esto se repite mientras sigan llegando solicitudes, pero si el entorno se mantiene inactivo mucho tiempo, se recicla
+4) Si llega una solicitud con el entorno reciclado, hace todo esto de vuelta (Provisioned concurrency: Tener muchos entornos descongelados para qaue no se afedcte la performance)
 
