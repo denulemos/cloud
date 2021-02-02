@@ -217,3 +217,93 @@ Lo que triggerea a una Lambda son los **Event Sources**
 3) Esto se repite mientras sigan llegando solicitudes, pero si el entorno se mantiene inactivo mucho tiempo, se recicla
 4) Si llega una solicitud con el entorno reciclado, hace todo esto de vuelta (Provisioned concurrency: Tener muchos entornos descongelados para qaue no se afedcte la performance)
 
+### Handler Method
+
+Es el entry point de las funciones lambda, el handler toma el Event Object y Context Object
+
+* Event Object: Da info sobre el evento que triggereo la lambda, puede ser generado solo por AWS o por el usuario.
+* Context Object: Es generado por AWS con metadata sobre la ejecucion
+
+### Configurar funciones Lambda
+
+**Memoria, Timeout y Concurrencia**
+
+Son las 3 mas importantes de todos los pilares. AWS cobra por memoria y duracion de la funcion (Maximo 15 minutos). Se debe encontrar un balance entre el timeout pero que la funcion pueda ejecutarse correctamente en ese tiempo.
+
+## Best Practices
+
+### Separar Logica de Negocios
+
+Separar la logica del handler, permite hacer mejores unit tests sin tener en cuenta la configuracion de la funcion
+
+### Escribir funciones modulares
+
+Crear funciones que cumplan una sola tarea cada uno
+
+### Funciones sin estado
+
+Las funciones solo existen cuando son necesarias
+
+### Solo incluir lo necesario
+
+Disminuir packages o archivos para que la lambda se "prenda" mas rapido
+
+### Incluir logging
+
+Escribir logs en Cloudwatch
+
+### Incluir info de los resultados
+
+Se le debe informar a lambda el resultado de la funcion. Lambda incluye context-obj para los callbacks
+
+### Evitar recursividad
+
+Que una funcion no se llame a si misma
+
+# Amazon Comprehend
+
+Se ingresa texto con informacion importante para el negocio de forma no estructurada, como en Facebook, Twitter, etc.. Hay que analizar este texto en un contexto humano.
+
+## Capabilities
+
+* Sentimiento: Permite entender si lo que el usuario dice es negativo o positivo
+* Entidades: De un texto extraer entidades que entran en categorias (Fecha, org, persona..)
+* Deteccion del lenguaje: Para apps multilenguaje
+* Frases Verbales: A que se esta refiriendo el texto (a uno mismo, organizacion), es la aparicion de pronombres
+* Topic Modeling: En AWS se piensa como un servicio, extrae "temas" de los documentos (tomar 100 posts de un blog y saber de qué se tratan todos). Esto se puede hacer con S3, se suben CSV con topics y documentos.
+
+Este servicio de AWS esta siendo constantemente entrenado.
+
+## ¿Para qué usarlo?
+
+* Saber que dice la gente sobre tu organizacion
+* Busqueda semantica, como elastic search
+* Conocer que hay en muchos documentos para organizarlos mejor
+
+### Social Analytics App
+
+Tweets de Twitter -> Tomo los tweets que me importan (Amazon Kinesis Firehouse) -> NLP (Via Lambda Functions) -> Output CSV -> S3 -> Analizar el Output (Athena Amazon)
+
+# Amazon Comprehend Medical
+
+Es una API hecha especificamente para la medicina
+
+* Extrae info de un texto medico y se puede guardar en cualquier servicio como S3
+* Conecta nombre de tests con su value
+* Devuelve un JSON con todo lo extraido por categorias (Un JSON para que sea facil de buscar en Dynamo)
+
+# Amazon Transcribe
+
+Es una herramienta d Speech Detection con Deep Learning
+
+* Es constantemente entrenada
+* Solemos guardar data en video y audios tambien, esto debe ser guardado como texto tambien
+* Devuelve un texto con puntuacioneds y un nivel de confiabilidad por palabra
+* Reconoce diversos Speakers
+
+# Amazon Translate
+
+Traducciones live u On Demand, se usa y se paga solo eso. 
+
+
+
